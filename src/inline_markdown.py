@@ -38,3 +38,53 @@ def extract_markdown_links(text):
     pattern = r"\[([^\[\]]*)\]\(([^\(\)]*)\)"
     link_matches = re.findall(pattern, text)
     return link_matches
+
+
+def split_nodes_by_type(old_nodes, extract_func, text_type):
+    new_nodes = []
+    
+    for old_node in old_nodes:
+        if old_node.text_type != TextType.TEXT:
+            new_nodes.append(old_node)
+            continue
+
+        extracted_items = extract_func(old_node.text)    
+
+        # if there aren't any links, then just add the original
+        if len(extracted_items) == 0:
+            new_nodes.append(old_node)
+            continue
+
+        item_text = extracted_items[0][0]
+        item_url = extracted_items[0][1]
+
+        # For each image found in the text
+        if text_type == TextType.IMAGE:
+            delimiter = f"![{item_text}]({item_url})"
+        else:
+            delimiter = f"[{item_text}]({item_url})"
+
+        sections = old_node.text.split(delimiter, 1)
+
+        # first section is the text before the image
+        if sections[0]:
+            new_nodes.append(TextNode(sections[0], TextType.TEXT))
+        # process the image
+        new_nodes.append(TextNode(item_text, text_type, item_url))
+        # recursion on the second section of the text
+        if sections[1]:
+            new_nodes.extend(
+                split_nodes_by_type(
+                    [TextNode(sections[1], TextType.TEXT)],
+                    extract_func,
+                    text_type
+                )
+            )
+
+    return new_nodes
+
+def split_nodes_image(old_nodes):
+    return split_nodes_by_type(old_nodes, extract_markdown_images, TextType.IMAGE)
+
+def split_nodes_link(old_nodes):
+    return split_nodes_by_type(old_nodes, extract_markdown_links, TextType.LINK)
