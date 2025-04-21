@@ -2,16 +2,17 @@ import unittest
 
 from htmlnode import HTMLNode, LeafNode, ParentNode
 
+
 class TestHTMLNode(unittest.TestCase):
     def test_props(self):
         node = HTMLNode(
-            None, 
-            None, 
-            None, 
-            {"href": "https://www.boot.dev", "target": "_blank"}    
+            None,
+            None,
+            None,
+            {"href": "https://www.boot.dev", "target": "_blank"},
         )
 
-        test_text = " href=\"https://www.boot.dev\" target=\"_blank\""
+        test_text = ' href="https://www.boot.dev" target="_blank"'
         self.assertEqual(node.props_to_html(), test_text)
 
     def test_values(self):
@@ -38,15 +39,15 @@ class TestHTMLNode(unittest.TestCase):
 
     def test_repr(self):
         node = HTMLNode(
-            "a", 
-            "test string", 
+            "a",
+            "test string",
             None,
-            {"href": "https://www.boot.dev", "target": "_blank"}
+            {"href": "https://www.boot.dev", "target": "_blank"},
         )
-        
+
         self.assertEqual(
-            "HTMLNode(a, test string, None, {'href': 'https://www.boot.dev', 'target': '_blank'})"
-            , repr(node)
+            "HTMLNode(a, test string, None, {'href': 'https://www.boot.dev', 'target': '_blank'})",
+            repr(node),
         )
 
     def test_none(self):
@@ -60,7 +61,9 @@ class TestHTMLNode(unittest.TestCase):
 
     def test_leaf_to_html_a(self):
         node = LeafNode("a", "Click me!", {"href": "https://www.google.com"})
-        self.assertEqual(node.to_html(), "<a href=\"https://www.google.com\">Click me!</a>")
+        self.assertEqual(
+            node.to_html(), '<a href="https://www.google.com">Click me!</a>'
+        )
 
     def test_leaf_to_html_no_tag(self):
         node = LeafNode(None, "Hello, world!")
@@ -118,7 +121,8 @@ class TestHTMLNode(unittest.TestCase):
         self.assertEqual(
             node.to_html(),
             "<h2><b>Bold text</b>Normal text<i>italic text</i>Normal text</h2>",
-        )   
-        
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
